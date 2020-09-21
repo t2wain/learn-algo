@@ -9,62 +9,41 @@ namespace AlgoTest
 {
     public class KnapsackTest
     {
-
-        private IEnumerable<K.Item> GetItemSet1() 
+        [Fact]
+        public void CalcGreedy1Optimal()
         {
-            return new K.Item[]
-                        {
-                new K.Item { Id = 1, Weight = 23, Value = 92 , IsOptimal = true },
-                new K.Item { Id = 2, Weight = 31, Value = 57 , IsOptimal = true },
-                new K.Item { Id = 3, Weight = 29, Value = 49 , IsOptimal = true },
-                new K.Item { Id = 4, Weight = 44, Value = 68 , IsOptimal = true },
-                new K.Item { Id = 5, Weight = 53, Value = 60 },
-                new K.Item { Id = 6, Weight = 38, Value = 43 , IsOptimal = true },
-                new K.Item { Id = 7, Weight = 63, Value = 67 },
-                new K.Item { Id = 8, Weight = 85, Value = 84 },
-                new K.Item { Id = 9, Weight = 89, Value = 87 },
-                new K.Item { Id = 10, Weight = 82, Value = 72 },
-            };
+            var d = K.GetTestSack1();
+            var s = K.Greedy(d.AllItems, d.Capacity, true);
+            Assert.Equal(d.TotalValue, s.TotalValue, 3);
+            Assert.Equal(d.TotalWeight, s.TotalWeight);
         }
 
         [Fact]
-        public void ShouldCalcGreedy()
+        public void CalcDP1Optimal()
         {
-            var items = new K.Item[]
-            {
-                new K.Item { Id = 1, Weight = 5, Value = 10 },
-                new K.Item { Id = 2, Weight = 4, Value = 40 },
-                new K.Item { Id = 3, Weight = 6, Value = 30 },
-                new K.Item { Id = 4, Weight = 3, Value = 50 },
-            };
-            var s = K.Greedy(items, 10, true);
-            Assert.Equal(90.0, s.TotalValue, 3);
-            Assert.Equal(7, s.TotalWeight);
+            var d = K.GetTestSack1();
+            var s = K.DP(d.AllItems, d.Capacity);
+            Assert.Equal(d.TotalValue, s.TotalValue, 3);
+            Assert.Equal(d.TotalWeight, s.TotalWeight);
         }
 
         [Fact]
-        public void ShouldCalcDP()
+        public void CalcDP2Optimal()
         {
-            var items = new K.Item[]
-            {
-                new K.Item { Id = 1, Weight = 5, Value = 10 },
-                new K.Item { Id = 2, Weight = 4, Value = 40 },
-                new K.Item { Id = 3, Weight = 6, Value = 30 },
-                new K.Item { Id = 4, Weight = 3, Value = 50 },
-            };
-            var s = K.DP(items, 10);
-            Assert.Equal(90.0, s.TotalValue, 3);
-            Assert.Equal(7, s.TotalWeight);
+            var d = K.GetTestSack2();
+            var s = K.DP(d.AllItems, d.Capacity);
+            Assert.Equal(d.Items.Count, s.Items.Count);
+            Assert.Equal(d.TotalWeight, s.TotalWeight);
+            Assert.Equal(d.TotalValue, s.TotalValue, 3);
         }
 
         [Fact]
-        public void ShouldCalcDP2()
+        public void CalcGreedy2NotOptimal()
         {
-            var items = GetItemSet1();
-            var s = K.DP(items, 165);
-            var v = items.Where(i => i.IsOptimal).Sum(i => i.Value);
-            var w = items.Where(i => i.IsOptimal).Sum(i => i.Weight);
-            Assert.Equal(5, s.Items.Count());
+            var d = K.GetTestSack2();
+            var s = K.Greedy(d.AllItems, d.Capacity, true);
+            Assert.True(s.TotalValue < d.TotalValue);
         }
+
     }
 }
