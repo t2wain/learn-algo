@@ -158,7 +158,7 @@ namespace AlgoLib
                     if (ps.TotalValue > cs.TotalValue && ps.TotalValue > ls.TotalValue)
                         // select sack from previous stage
                         currStage[k] = ps;
-                    if (ls.TotalValue > cs.TotalValue)
+                    else if (ls.TotalValue > cs.TotalValue)
                         // select previous sack of current stage
                         cs.SetContent(ls);
                     ls = currStage[k];
