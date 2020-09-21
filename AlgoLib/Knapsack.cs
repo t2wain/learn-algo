@@ -16,6 +16,7 @@ namespace AlgoLib
             public int Weight { get; set; }
             public double Value { get; set; }
             public double Quantity { get; set; }
+            public bool IsOptimal { get; set; }
         }
 
         public class Sack
@@ -89,8 +90,8 @@ namespace AlgoLib
                     var ps = prevStage[k]; // previous stage
                     if (i.Weight > cs.Capacity)
                         // use solution from previous stage
-                        currStage[k] = ps; 
-                    else if (i.Weight <= cs.Capacity && i.Value > ps.TotalValue)
+                        currStage[k] = ps;
+                    else if (i.Value > ps.TotalValue || i.Weight + ps.TotalWeight <= cs.Capacity)
                     {
                         // found better solution
                         cs.TotalWeight = i.Weight;
@@ -109,6 +110,14 @@ namespace AlgoLib
                             }
                         }
                     }
+                    else if (currStage[k - 1].TotalValue > ps.TotalValue)
+                    {
+                        var t = currStage[k - 1];
+                        cs.TotalWeight = t.TotalWeight;
+                        cs.TotalValue = t.TotalValue;
+                        cs.Items.AddRange(t.Items);
+                    }
+                    else currStage[k] = ps;
                 }
 
                 prevStage = currStage;
