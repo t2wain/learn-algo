@@ -57,6 +57,24 @@ namespace AlgoLib
             }
         }
 
+        class Stage
+        {
+            public List<Sack> Sacks { get; set; } = new List<Sack>();
+            public Sack MaxSack { get; private set; } = new Sack();
+            public Sack GetNextSack()
+            {
+                MaxSack = new Sack { Capacity = Sacks.Count };
+                Sacks.Add(MaxSack);
+                return MaxSack;
+            }
+            public Sack GetSackByCapacity(int capacity)
+            {
+                if (capacity >= MaxSack.Capacity)
+                    return MaxSack;
+                else return Sacks[capacity];
+            }
+        }
+
         #endregion
 
         #region Test Sacks
@@ -124,7 +142,9 @@ namespace AlgoLib
             }
             return s;
         }
-    
+
+        #region DP1
+
         public static Sack DP(IEnumerable<Item> items, int sackCapacity)
         {
             // optimal solution from previous decision stage
@@ -177,5 +197,60 @@ namespace AlgoLib
             var rs = prevStage[remainCapacity];
             cs.AddItem(rs.Items);
         }
+
+        #endregion
+
+        #region DP2
+
+        public static Sack DP2(IEnumerable<Item> items, int sackCapacity)
+        {
+            // optimal solution from previous decision stage
+            var prevStage = new Stage();
+
+            // Add each item in sequence.
+            // Each item is a decision in a sequence of decisions.
+            foreach (var i in items)
+            {
+                var currStage = new Stage();
+                // max value the current stage can obtain
+                var maxValue = prevStage.MaxSack.TotalValue + i.Value;
+
+                // previous sack of current stage
+                var ls = new Sack();
+
+                for (var k = 0; k <= sackCapacity; k++)
+                {
+                    var cs = currStage.GetNextSack(); // current stage
+                    var ps = prevStage.GetSackByCapacity(k); // previous stage
+                    // Add item to sack
+                    DPAddItemToSack2(prevStage, cs, i);
+                    // Pick a sack with a hightest value among
+                    // the last stage, or previous sack, or current sack
+                    if (ps.TotalValue > cs.TotalValue && ps.TotalValue > ls.TotalValue)
+                        // select sack from previous stage
+                        cs.SetContent(ps);
+                    else if (ls.TotalValue > cs.TotalValue)
+                        // select previous sack of current stage
+                        cs.SetContent(ls);
+                    ls = cs;
+                    if (cs.TotalValue + 0.01 > maxValue)
+                        break; // max value is obtained
+                }
+
+                prevStage = currStage;
+            }
+
+            return prevStage.MaxSack;
+        }
+
+        private static void DPAddItemToSack2(Stage prevStage, Sack cs, Item i)
+        {
+            cs.AddItem(i);
+            var remainCapacity = cs.RemainCapacity;
+            var rs = prevStage.GetSackByCapacity(remainCapacity);
+            cs.AddItem(rs.Items);
+        }
+
+        #endregion
     }
 }

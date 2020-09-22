@@ -45,5 +45,24 @@ namespace AlgoTest
             Assert.True(s.TotalValue < d.TotalValue);
         }
 
+        [Fact]
+        public void CalcDP2Set1Optimal()
+        {
+            var d = K.GetTestSack1();
+            var s = K.DP2(d.AllItems, d.Capacity);
+            Assert.Equal(d.TotalValue, s.TotalValue, 3);
+            Assert.Equal(d.TotalWeight, s.TotalWeight);
+        }
+
+        [Fact]
+        public void CalcDP2Set2Optimal()
+        {
+            var d = K.GetTestSack2();
+            var s = K.DP2(d.AllItems, d.Capacity);
+            Assert.Equal(d.Items.Count, s.Items.Count);
+            Assert.Equal(d.TotalWeight, s.TotalWeight);
+            Assert.Equal(d.TotalValue, s.TotalValue, 3);
+        }
+
     }
 }
