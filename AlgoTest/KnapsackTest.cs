@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using K = AlgoLib.KnapsackA;
 using K2 = AlgoLib.Knapsack.KDP;
+using TD = AlgoLib.Knapsack.TestData;
 using Xunit;
 using System.Linq;
 
@@ -68,7 +69,7 @@ namespace AlgoTest
         [Fact]
         public void CalcDP3Set2Optimal()
         {
-            var d = K2.GetTestSack2();
+            var d = TD.GetTestSack2();
             var s = K2.AddItems(d.AllItems, d.Capacity);
             Assert.Equal(d.TotalWeight, s.TotalWeight);
             Assert.Equal(d.TotalValue, s.TotalValue, 3);

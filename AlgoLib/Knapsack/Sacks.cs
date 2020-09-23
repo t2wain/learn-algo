@@ -11,17 +11,23 @@ namespace AlgoLib.Knapsack
 
         public Sacks()
         {
+            var s = new Sack();
             this._sacks = new List<Sack>();
-            this._sacks.Add(new Sack());
+            this._sacks.Add(s);
+            this.MaxSack = s;
         }
 
-        public Sack MaxSack { get; protected set; } = new Sack();
+        public Sack MaxSack { get; protected set; }
 
         public Sack GetSackByCapacity(int capacity)
         {
             Sack s = new Sack();
             foreach (var i in this._sacks)
             {
+                // get the largest saved capacity
+                // that does not exceed the requested capacity
+                // since not all capcities are saved
+                // because they have the same values.
                 if (i.Capacity > capacity)
                     break;
                 s = i;
@@ -29,25 +35,17 @@ namespace AlgoLib.Knapsack
             return s;
         }
 
-        public void SaveLargerSack(Sack currSack, Sack prevSack)
+        public void SaveLargerSack(Sack s)
         {
-            Sack ns = null;
-            var ls = this._sacks.Last();
-            if (currSack.TotalValue > prevSack.TotalValue 
-                && currSack.TotalValue > ls.TotalValue)
+            // only store the sack if
+            // the value is higher than the last
+            // saved capacity to reduce memory
+            if (s.TotalValue > this.MaxSack.TotalValue)
             {
-                ns = new Sack();
-                ns.SetContent(currSack);
-            }
-            else if (prevSack.TotalValue > currSack.TotalValue 
-                && prevSack.TotalValue > ls.TotalValue)
-            {
-                ns = new Sack();
-                ns.SetContent(prevSack);
-                ns.Capacity = currSack.Capacity;
-            }
-            if (ns != null)
-            {
+                // higher values found
+                // since the last saved capacity
+                var ns = new Sack();
+                ns.SetContent(s);
                 this._sacks.Add(ns);
                 this.MaxSack = ns;
             }

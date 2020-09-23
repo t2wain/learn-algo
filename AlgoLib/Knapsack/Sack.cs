@@ -8,7 +8,7 @@ namespace AlgoLib.Knapsack
     {
         public int Capacity { get; set; }
         public List<Item> AllItems { get; } = new List<Item>();
-        public IDictionary<int, Item> Items { get; } = new Dictionary<int, Item>();
+        public List<Item> Items { get; } = new List<Item>();
         public int TotalWeight { get; protected set; }
         public double TotalValue { get; protected set; }
         public int RemainCapacity
@@ -21,13 +21,9 @@ namespace AlgoLib.Knapsack
         }
         public void AddItem(Item i)
         {
-            if (!this.Items.ContainsKey(i.Id)
-                    && i.Weight + this.TotalWeight <= this.Capacity)
-            {
-                this.TotalWeight += i.Weight;
-                this.TotalValue += i.Value;
-                this.Items.Add(i.Id, i);
-            }
+            this.TotalWeight += i.Weight;
+            this.TotalValue += i.Value;
+            this.Items.Add(i);
         }
         public void AddItem(IEnumerable<Item> items)
         {
@@ -37,8 +33,7 @@ namespace AlgoLib.Knapsack
         public void SetContent(Sack s)
         {
             this.Items.Clear();
-            foreach (var i in s.Items)
-                this.Items.Add(i);
+            this.Items.AddRange(s.Items);
             this.Capacity = s.Capacity;
             this.TotalValue = s.TotalValue;
             this.TotalWeight = s.TotalWeight;
