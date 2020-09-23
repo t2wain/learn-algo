@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AlgoLib
 {
-    public class Knapsack
+    public class KnapsackA
     {
 
         #region Data Classes
@@ -164,9 +164,6 @@ namespace AlgoLib
                 for (int c = 0; c <= sackCapacity; c++)
                     currStage.Add(new Sack { Capacity = c });
 
-                // previous sack of current stage
-                var ls = new Sack(); 
-
                 for (var k = 0; k <= sackCapacity; k++)
                 {
                     var cs = currStage[k]; // current stage
@@ -174,14 +171,10 @@ namespace AlgoLib
                     // Add item to sack
                     DPAddItemToSack(prevStage, cs, i);
                     // Pick a sack with a hightest value among
-                    // the last stage, or previous sack, or current sack
-                    if (ps.TotalValue > cs.TotalValue && ps.TotalValue > ls.TotalValue)
+                    // the last stage or current sack
+                    if (ps.TotalValue > cs.TotalValue)
                         // select sack from previous stage
                         currStage[k] = ps;
-                    else if (ls.TotalValue > cs.TotalValue)
-                        // select previous sack of current stage
-                        cs.SetContent(ls);
-                    ls = currStage[k];
                 }
 
                 prevStage = currStage;
@@ -215,9 +208,6 @@ namespace AlgoLib
                 // max value the current stage can obtain
                 var maxValue = prevStage.MaxSack.TotalValue + i.Value;
 
-                // previous sack of current stage
-                var ls = new Sack();
-
                 for (var k = 0; k <= sackCapacity; k++)
                 {
                     var cs = currStage.GetNextSack(); // current stage
@@ -225,14 +215,10 @@ namespace AlgoLib
                     // Add item to sack
                     DPAddItemToSack2(prevStage, cs, i);
                     // Pick a sack with a hightest value among
-                    // the last stage, or previous sack, or current sack
-                    if (ps.TotalValue > cs.TotalValue && ps.TotalValue > ls.TotalValue)
+                    // the last stage or current sack
+                    if (ps.TotalValue > cs.TotalValue)
                         // select sack from previous stage
                         cs.SetContent(ps);
-                    else if (ls.TotalValue > cs.TotalValue)
-                        // select previous sack of current stage
-                        cs.SetContent(ls);
-                    ls = cs;
                     if (cs.TotalValue + 0.01 > maxValue)
                         break; // max value is obtained
                 }
@@ -245,10 +231,13 @@ namespace AlgoLib
 
         private static void DPAddItemToSack2(Stage prevStage, Sack cs, Item i)
         {
-            cs.AddItem(i);
-            var remainCapacity = cs.RemainCapacity;
-            var rs = prevStage.GetSackByCapacity(remainCapacity);
-            cs.AddItem(rs.Items);
+            if (i.Weight <= cs.Capacity)
+            {
+                cs.AddItem(i);
+                var remainCapacity = cs.RemainCapacity;
+                var rs = prevStage.GetSackByCapacity(remainCapacity);
+                cs.AddItem(rs.Items);
+            }
         }
 
         #endregion
